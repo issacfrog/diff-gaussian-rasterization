@@ -12,6 +12,7 @@
 #include <torch/extension.h>
 #include "rasterize_points.h"
 
+// 通过pybind11将CUDA函数暴露给Python
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("rasterize_gaussians", &RasterizeGaussiansCUDA);
   m.def("rasterize_gaussians_backward", &RasterizeGaussiansBackwardCUDA);

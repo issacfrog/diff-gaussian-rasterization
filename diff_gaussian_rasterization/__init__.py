@@ -12,8 +12,10 @@
 from typing import NamedTuple
 import torch.nn as nn
 import torch
-from . import _C
+from . import _C # 这里的——C是编译好的动态库
 
+# 本质上是python/pytorch与c++/cuda光栅化直接的桥接层
+# 调试时把参数搬到CPU进行备份
 def cpu_deep_copy_tuple(input_tuple):
     copied_tensors = [item.cpu().clone() if isinstance(item, torch.Tensor) else item for item in input_tuple]
     return tuple(copied_tensors)
@@ -29,7 +31,7 @@ def rasterize_gaussians(
     cov3Ds_precomp,
     raster_settings,
 ):
-    return _RasterizeGaussians.apply(
+    return _RasterizeGaussians.apply( # apply会进入自定义的forward和backward，从而支持自动求导
         means3D,
         means2D,
         sh,
@@ -41,8 +43,10 @@ def rasterize_gaussians(
         raster_settings,
     )
 
+# 实际
 class _RasterizeGaussians(torch.autograd.Function):
     @staticmethod
+    # 调用cuda的前向和反向进行处理
     def forward(
         ctx,
         means3D,
@@ -168,6 +172,7 @@ class GaussianRasterizationSettings(NamedTuple):
     prefiltered : bool
     debug : bool
 
+# 光栅化类的外部封装接口
 class GaussianRasterizer(nn.Module):
     def __init__(self, raster_settings):
         super().__init__()

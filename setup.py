@@ -9,6 +9,7 @@
 # For inquiries contact  george.drettakis@inria.fr
 #
 
+# 这里diff_gaussian_rasterization/__init__.py 里 from . import _C 调用这些函数进行了绑定等操作
 from setuptools import setup
 from torch.utils.cpp_extension import CUDAExtension, BuildExtension
 import os
